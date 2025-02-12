@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skmirza-foodfarm-deploy
+  labels:
+    app: skmirza-foodfarm-deploy-lb01
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: skmirza-foodfarm-app
+  template:
+    metadata:
+      labels:
+        app: skmirza-foodfarm-app
+    spec:
+      containers:
+      - name: skmirza-foodfarm-container
+        image: sameer014/skmirza-foodfarm-img:latest
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 8088
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skmirza-foodfarm-np-service
+  labels:
+    app: skmirza-foodfarm-np-app
+spec:
+  selector:
+    app: skmirza-foodfarm-app
+
+  type: NodePort
+  ports:
+  - nodePort: 30021
+    port: 8088
+    targetPort: 8088
